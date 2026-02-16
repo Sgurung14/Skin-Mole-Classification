@@ -2,13 +2,13 @@ stages:
   train:
     cmd: python src/train.py
     deps:
-    - data/raw
-    - src/train.py
+      - data/raw
+      - src/train.py
     params:
-    - train.epochs
-    - train.lr
+      - train.epochs
+      - train.lr
     outs:
-    - models/model.pkl
+      - models/model.pkl
     metrics:
-    - metrics.json:
-        cache: false
+      - metrics.json:
+          cache: false
