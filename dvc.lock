@@ -1,27 +1,75 @@
 schema: '2.0'
 stages:
   train:
-    cmd: python src/train.py
+    cmd: python -m src.train
     deps:
     - path: data/raw
       hash: md5
       md5: 7db6557ad9a9b4ccaf81f846a9338d21.dir
       size: 3682199851
       nfiles: 9524
+    - path: src/augmentations.py
+      hash: md5
+      md5: 9bf23f3c8c4f299a146a7a2396f98e4d
+      size: 4376
+    - path: src/data.py
+      hash: md5
+      md5: 6979767f2338abc89416ba100e9c542d
+      size: 1713
+    - path: src/modeling.py
+      hash: md5
+      md5: b13908c431c7d340f329b33b195c31ae
+      size: 553
     - path: src/train.py
       hash: md5
-      md5: b9478f1668c60200181a62de57e55fad
-      size: 966
+      md5: 56fb91710aef69ab1f913c050f19ed54
+      size: 3409
     params:
       params.yaml:
-        train.epochs: 10
-        train.lr: 0.001
+        train.batch_size: 32
+        train.epochs: 1
+        train.img_size: 224
+        train.lr: 0.01
     outs:
     - path: metrics.json
       hash: md5
-      md5: f65f6081acff3675a3721627a25132dc
-      size: 51
-    - path: models/model.pkl
+      md5: c6deef15af320ec33fe7172a4e2e7f18
+      size: 229
+    - path: models/model.weights.h5
       hash: md5
-      md5: dd76f24acdf4cdd616b7ad399061932a
-      size: 62
+      md5: 726ba7fe754fca83ce9c13e0014a8fdc
+      size: 16816864
+  evaluate:
+    cmd: python -m src.evaluation
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 7db6557ad9a9b4ccaf81f846a9338d21.dir
+      size: 3682199851
+      nfiles: 9524
+    - path: models/model.weights.h5
+      hash: md5
+      md5: 726ba7fe754fca83ce9c13e0014a8fdc
+      size: 16816864
+    - path: src/data.py
+      hash: md5
+      md5: 6979767f2338abc89416ba100e9c542d
+      size: 1713
+    - path: src/evaluation.py
+      hash: md5
+      md5: 117be8907c6bf1f451558b5818baf00d
+      size: 4166
+    - path: src/modeling.py
+      hash: md5
+      md5: b13908c431c7d340f329b33b195c31ae
+      size: 553
+    outs:
+    - path: eval_metrics.json
+      hash: md5
+      md5: 351c0133c3bdef95a623d65fee2a6417
+      size: 233
+    - path: reports
+      hash: md5
+      md5: b86455b2b0cb409abaeeddaf1f916dfc.dir
+      size: 71176
+      nfiles: 2

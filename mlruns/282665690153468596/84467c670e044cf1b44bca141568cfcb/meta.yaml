@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/inamgurung/Skin-Mole-Classification/mlruns/282665690153468596/84467c670e044cf1b44bca141568cfcb/artifacts
+end_time: 1771346444726
+entry_point_name: ''
+experiment_id: '282665690153468596'
+lifecycle_stage: active
+run_id: 84467c670e044cf1b44bca141568cfcb
+run_name: evaluate
+run_uuid: 84467c670e044cf1b44bca141568cfcb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1771346444659
+status: 3
+tags: []
+user_id: inamgurung

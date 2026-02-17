@@ -1,2 +1,2 @@
 # Skin-Disease-Classification
-classifying skin diseases based on photos
+classifying skin mole cancer based on image data

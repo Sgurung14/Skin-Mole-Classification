@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/inamgurung/Skin-Mole-Classification/mlruns/282665690153468596/d916ad0a85f1438a8ac510e4e3f77ec1/artifacts
+end_time: 1771344018930
+entry_point_name: ''
+experiment_id: '282665690153468596'
+lifecycle_stage: active
+run_id: d916ad0a85f1438a8ac510e4e3f77ec1
+run_name: capable-auk-759
+run_uuid: d916ad0a85f1438a8ac510e4e3f77ec1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1771343999298
+status: 4
+tags: []
+user_id: inamgurung

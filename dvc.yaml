@@ -1,14 +1,32 @@
 stages:
+  evaluate:
+    cmd: python -m src.evaluation
+    deps:
+      - data/raw
+      - models/model.weights.h5
+      - src/evaluation.py
+      - src/modeling.py
+      - src/data.py
+    outs:
+      - reports
+    metrics:
+      - eval_metrics.json:
+          cache: false
   train:
-    cmd: python src/train.py
+    cmd: python -m src.train
     deps:
       - data/raw
       - src/train.py
+      - src/modeling.py
+      - src/data.py
+      - src/augmentations.py
     params:
+      - train.batch_size
       - train.epochs
+      - train.img_size
       - train.lr
     outs:
-      - models/model.pkl
+      - models/model.weights.h5
     metrics:
       - metrics.json:
           cache: false
