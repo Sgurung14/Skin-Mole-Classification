@@ -1,4 +1,5 @@
 data
+!data/*.dvc
 /reports
 mlruns/
 __pycache__/
