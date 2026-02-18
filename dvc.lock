@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/augmented
       hash: md5
-      md5: 4ad935d093eab2c0d3e3a40bf0e357ca.dir
-      size: 331946921
+      md5: 4cbf6d558c2c0aae2cbe3c6b61b7c240.dir
+      size: 331946934
       nfiles: 19044
     - path: src/augmentations.py
       hash: md5
@@ -33,24 +33,24 @@ stages:
     outs:
     - path: metrics.json
       hash: md5
-      md5: 19347de5536498858af14e5b6a872f42
+      md5: de721486e2bbcf2909abe1a457545285
       size: 230
     - path: models/model.weights.h5
       hash: md5
-      md5: f6300639365466599afd8e95977963e9
-      size: 16816864
+      md5: bf66400b191e489cdba4cc8e78707ee4
+      size: 16840320
   evaluate:
     cmd: python -m src.evaluation
     deps:
     - path: data/augmented
       hash: md5
-      md5: 4ad935d093eab2c0d3e3a40bf0e357ca.dir
-      size: 331946921
+      md5: 4cbf6d558c2c0aae2cbe3c6b61b7c240.dir
+      size: 331946934
       nfiles: 19044
     - path: models/model.weights.h5
       hash: md5
-      md5: f6300639365466599afd8e95977963e9
-      size: 16816864
+      md5: bf66400b191e489cdba4cc8e78707ee4
+      size: 16840320
     - path: src/data.py
       hash: md5
       md5: 3e00c13feb7cc2af8357b4a6ce4380c0
@@ -66,21 +66,21 @@ stages:
     outs:
     - path: eval_metrics.json
       hash: md5
-      md5: 6dbea434fc6761b1c80998fcbb582227
-      size: 234
+      md5: 2a66e33689cdd722742317abe4364fe7
+      size: 235
     - path: reports
       hash: md5
-      md5: 125c2c69503b420a0c9d5145f529cdc0.dir
-      size: 72648
+      md5: ba338c45d103e13974ad47ba8496efe4.dir
+      size: 73514
       nfiles: 2
   augment:
     cmd: python -m src.prepare_data
     deps:
     - path: data/raw
       hash: md5
-      md5: 7db6557ad9a9b4ccaf81f846a9338d21.dir
-      size: 3682199851
-      nfiles: 9524
+      md5: 0321e22cc58890b4d5d0d6501e05f521.dir
+      size: 3682187555
+      nfiles: 9522
     - path: src/augmentations.py
       hash: md5
       md5: 9bf23f3c8c4f299a146a7a2396f98e4d
@@ -94,13 +94,12 @@ stages:
         augment.copies_per_image: 1
         augment.img_size: 224
         augment.include_original: true
-        augment.input_dir: 
-          data/raw/skin-moles-benign-vs-malignant-melanoma-isic19
+        augment.input_dir: data/raw
         augment.output_dir: data/augmented
         augment.seed: 42
     outs:
     - path: data/augmented
       hash: md5
-      md5: 4ad935d093eab2c0d3e3a40bf0e357ca.dir
-      size: 331946921
+      md5: 4cbf6d558c2c0aae2cbe3c6b61b7c240.dir
+      size: 331946934
       nfiles: 19044
