@@ -8,6 +8,7 @@ def build_datasets(
     validation_split,
     testing_split,
     seed,
+    augment_train=False,
 ):
     normalization_layer = tf.keras.layers.Rescaling(1.0 / 255)
 
@@ -42,7 +43,12 @@ def build_datasets(
 
     AUTOTUNE = tf.data.AUTOTUNE
 
-    train_ds = train_ds.map(preprocess_and_augment, num_parallel_calls=AUTOTUNE)\
+    if augment_train:
+        train_map_fn = preprocess_and_augment
+    else:
+        train_map_fn = preprocess
+
+    train_ds = train_ds.map(train_map_fn, num_parallel_calls=AUTOTUNE)\
                        .batch(batch_size)\
                        .prefetch(AUTOTUNE)
 

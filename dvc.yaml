@@ -1,8 +1,23 @@
 stages:
+  augment:
+    cmd: python -m src.prepare_data
+    deps:
+      - data/raw
+      - src/prepare_data.py
+      - src/augmentations.py
+    params:
+      - augment.input_dir
+      - augment.output_dir
+      - augment.img_size
+      - augment.copies_per_image
+      - augment.include_original
+      - augment.seed
+    outs:
+      - data/augmented
   evaluate:
     cmd: python -m src.evaluation
     deps:
-      - data/raw
+      - data/augmented
       - models/model.weights.h5
       - src/evaluation.py
       - src/modeling.py
@@ -15,7 +30,7 @@ stages:
   train:
     cmd: python -m src.train
     deps:
-      - data/raw
+      - data/augmented
       - src/train.py
       - src/modeling.py
       - src/data.py

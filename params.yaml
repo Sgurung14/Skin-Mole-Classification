@@ -1,9 +1,19 @@
 train:
-  lr: 0.01
+  lr: 0.001
   epochs: 1
-  batch_size: 32
+  batch_size: 16
   img_size: 224
   validation_split: 0.2
   testing_split: 0.1
   seed: 42
-  dataset_dir: data/raw/skin-moles-benign-vs-malignant-melanoma-isic19
+  dataset_dir: data/augmented
+  base_weights: imagenet
+  online_augmentation: false
+
+augment:
+  input_dir: data/raw/skin-moles-benign-vs-malignant-melanoma-isic19
+  output_dir: data/augmented
+  img_size: 224
+  copies_per_image: 1
+  include_original: true
+  seed: 42

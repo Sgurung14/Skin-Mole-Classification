@@ -3,58 +3,58 @@ stages:
   train:
     cmd: python -m src.train
     deps:
-    - path: data/raw
+    - path: data/augmented
       hash: md5
-      md5: 7db6557ad9a9b4ccaf81f846a9338d21.dir
-      size: 3682199851
-      nfiles: 9524
+      md5: 4ad935d093eab2c0d3e3a40bf0e357ca.dir
+      size: 331946921
+      nfiles: 19044
     - path: src/augmentations.py
       hash: md5
       md5: 9bf23f3c8c4f299a146a7a2396f98e4d
       size: 4376
     - path: src/data.py
       hash: md5
-      md5: 6979767f2338abc89416ba100e9c542d
-      size: 1713
+      md5: 3e00c13feb7cc2af8357b4a6ce4380c0
+      size: 1841
     - path: src/modeling.py
       hash: md5
       md5: b13908c431c7d340f329b33b195c31ae
       size: 553
     - path: src/train.py
       hash: md5
-      md5: 56fb91710aef69ab1f913c050f19ed54
-      size: 3409
+      md5: 2ff2f658ca156f49a707c93781b04f35
+      size: 3580
     params:
       params.yaml:
-        train.batch_size: 32
+        train.batch_size: 16
         train.epochs: 1
         train.img_size: 224
-        train.lr: 0.01
+        train.lr: 0.001
     outs:
     - path: metrics.json
       hash: md5
-      md5: c6deef15af320ec33fe7172a4e2e7f18
-      size: 229
+      md5: 19347de5536498858af14e5b6a872f42
+      size: 230
     - path: models/model.weights.h5
       hash: md5
-      md5: 726ba7fe754fca83ce9c13e0014a8fdc
+      md5: f6300639365466599afd8e95977963e9
       size: 16816864
   evaluate:
     cmd: python -m src.evaluation
     deps:
-    - path: data/raw
+    - path: data/augmented
       hash: md5
-      md5: 7db6557ad9a9b4ccaf81f846a9338d21.dir
-      size: 3682199851
-      nfiles: 9524
+      md5: 4ad935d093eab2c0d3e3a40bf0e357ca.dir
+      size: 331946921
+      nfiles: 19044
     - path: models/model.weights.h5
       hash: md5
-      md5: 726ba7fe754fca83ce9c13e0014a8fdc
+      md5: f6300639365466599afd8e95977963e9
       size: 16816864
     - path: src/data.py
       hash: md5
-      md5: 6979767f2338abc89416ba100e9c542d
-      size: 1713
+      md5: 3e00c13feb7cc2af8357b4a6ce4380c0
+      size: 1841
     - path: src/evaluation.py
       hash: md5
       md5: 117be8907c6bf1f451558b5818baf00d
@@ -66,10 +66,41 @@ stages:
     outs:
     - path: eval_metrics.json
       hash: md5
-      md5: 351c0133c3bdef95a623d65fee2a6417
-      size: 233
+      md5: 6dbea434fc6761b1c80998fcbb582227
+      size: 234
     - path: reports
       hash: md5
-      md5: b86455b2b0cb409abaeeddaf1f916dfc.dir
-      size: 71176
+      md5: 125c2c69503b420a0c9d5145f529cdc0.dir
+      size: 72648
       nfiles: 2
+  augment:
+    cmd: python -m src.prepare_data
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 7db6557ad9a9b4ccaf81f846a9338d21.dir
+      size: 3682199851
+      nfiles: 9524
+    - path: src/augmentations.py
+      hash: md5
+      md5: 9bf23f3c8c4f299a146a7a2396f98e4d
+      size: 4376
+    - path: src/prepare_data.py
+      hash: md5
+      md5: ad5e431e721a9a6c1b8778e839d1631b
+      size: 3079
+    params:
+      params.yaml:
+        augment.copies_per_image: 1
+        augment.img_size: 224
+        augment.include_original: true
+        augment.input_dir: 
+          data/raw/skin-moles-benign-vs-malignant-melanoma-isic19
+        augment.output_dir: data/augmented
+        augment.seed: 42
+    outs:
+    - path: data/augmented
+      hash: md5
+      md5: 4ad935d093eab2c0d3e3a40bf0e357ca.dir
+      size: 331946921
+      nfiles: 19044

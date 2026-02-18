@@ -33,6 +33,7 @@ def main():
     val_split = float(t.get("validation_split", 0.2))
     test_split = float(t.get("testing_split", 0.1))
     base_weights = t.get("base_weights", "imagenet")
+    online_augmentation = bool(t.get("online_augmentation", False))
 
     Path("models").mkdir(parents=True, exist_ok=True)
 
@@ -45,6 +46,7 @@ def main():
         validation_split=val_split,
         testing_split=test_split,
         seed=seed,
+        augment_train=online_augmentation,
     )
 
     model = build_classifier(image_size=image_size, base_weights=base_weights)
@@ -81,6 +83,7 @@ def main():
                 "validation_split": val_split,
                 "testing_split": test_split,
                 "base_weights": str(base_weights),
+                "online_augmentation": online_augmentation,
             }
         )
 
