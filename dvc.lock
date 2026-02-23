@@ -27,17 +27,17 @@ stages:
     params:
       params.yaml:
         train.batch_size: 16
-        train.epochs: 1
+        train.epochs: 30
         train.img_size: 224
         train.lr: 0.001
     outs:
     - path: metrics.json
       hash: md5
-      md5: 3c8a176ee4b92472a7786d4e815bfa3d
-      size: 227
+      md5: 69518b425bcf53df0520c1bed7614f72
+      size: 230
     - path: models/model.weights.h5
       hash: md5
-      md5: 113809e91b68122149b4c197fdf40d89
+      md5: adcc43da19744fee32ac7d813ed03cef
       size: 16840320
   evaluate:
     cmd: python -m src.evaluation
@@ -49,7 +49,7 @@ stages:
       nfiles: 19044
     - path: models/model.weights.h5
       hash: md5
-      md5: 113809e91b68122149b4c197fdf40d89
+      md5: adcc43da19744fee32ac7d813ed03cef
       size: 16840320
     - path: src/data.py
       hash: md5
@@ -66,12 +66,12 @@ stages:
     outs:
     - path: eval_metrics.json
       hash: md5
-      md5: 63c121161e6bca96256a2fc295298333
+      md5: 851c811e7a66795ad92655238c0b2d5d
       size: 233
     - path: reports
       hash: md5
-      md5: 6ef7639bcf370ccd0fe432936435a8f2.dir
-      size: 72916
+      md5: ddf9931aa9dd30e6f7489b49361f683c.dir
+      size: 73837
       nfiles: 2
   augment:
     cmd: python -m src.prepare_data
