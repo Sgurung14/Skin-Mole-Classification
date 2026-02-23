@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 
 from src.modeling import build_classifier
@@ -15,9 +16,25 @@ APP_THRESHOLD = float(os.getenv("THRESHOLD", "0.5"))
 
 app = FastAPI(title="Skin Mole Classifier", version="1.0.0")
 
+#allows apps on different ports to access the API, e.g. frontend running on 5173 or 3000
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 _model = None
 
 
+#check if model is loaded already, if not load it and return it. 
+# This way we only load the model once when the app starts, and subsequent requests will use the already loaded model, improving performance.
 def get_model():
     global _model
     if _model is None:
@@ -35,7 +52,7 @@ def preprocess_pil(img: Image.Image, img_size: int):
     arr = np.expand_dims(arr, axis=0)
     return arr
 
-
+#check server is running
 @app.get("/health")
 def health():
     return {"status": "ok", "model_path": APP_MODEL_PATH}
@@ -43,6 +60,7 @@ def health():
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
+    #reject non-image files
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Please upload an image file.")
 
