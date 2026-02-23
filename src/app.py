@@ -13,18 +13,21 @@ from src.modeling import build_classifier
 APP_MODEL_PATH = os.getenv("MODEL_PATH", "models/model.weights.h5")
 APP_IMG_SIZE = int(os.getenv("IMG_SIZE", "224"))
 APP_THRESHOLD = float(os.getenv("THRESHOLD", "0.5"))
+APP_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000",
+    ).split(",")
+    if origin.strip()
+]
 
 app = FastAPI(title="Skin Mole Classifier", version="1.0.0")
 
-#allows apps on different ports to access the API, e.g. frontend running on 5173 or 3000
+# allows apps on different ports/domains to access the API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=APP_ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

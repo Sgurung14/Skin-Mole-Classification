@@ -1,0 +1,21 @@
+.git
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+
+# Large local artifacts not needed to serve the API
+mlruns/
+reports/
+frontend/
+*.ipynb
+
+# DVC / dataset caches
+.dvc/
+data/
