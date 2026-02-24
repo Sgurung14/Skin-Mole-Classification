@@ -14,3 +14,4 @@ frontend/.vercel/
 mlruns/
 reports/
 data/
+models/
