@@ -7,12 +7,13 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 
-from src.modeling import build_classifier
+from src.modeling import build_classifier, preprocess_input_array
 
 
 APP_MODEL_PATH = os.getenv("MODEL_PATH", "models/model.weights.h5")
 APP_IMG_SIZE = int(os.getenv("IMG_SIZE", "224"))
 APP_THRESHOLD = float(os.getenv("THRESHOLD", "0.5"))
+APP_MODEL_BACKBONE = os.getenv("MODEL_BACKBONE", "efficientnetb0")
 APP_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
@@ -45,7 +46,11 @@ def get_model():
     if _model is None:
         if not os.path.exists(APP_MODEL_PATH):
             raise RuntimeError(f"Model not found at {APP_MODEL_PATH}")
-        _model = build_classifier(image_size=(APP_IMG_SIZE, APP_IMG_SIZE), base_weights=None)
+        _model = build_classifier(
+            image_size=(APP_IMG_SIZE, APP_IMG_SIZE),
+            base_weights=None,
+            backbone=APP_MODEL_BACKBONE,
+        )
         _model.load_weights(APP_MODEL_PATH)
     return _model
 
@@ -53,14 +58,14 @@ def get_model():
 def preprocess_pil(img: Image.Image, img_size: int):
     img = img.convert("RGB")
     img = img.resize((img_size, img_size))
-    arr = np.asarray(img).astype("float32") / 255.0
+    arr = np.asarray(img).astype("float32")
     arr = np.expand_dims(arr, axis=0)
-    return arr
+    return preprocess_input_array(arr, backbone=APP_MODEL_BACKBONE)
 
 #check server is running
 @app.get("/health")
 def health():
-    return {"status": "ok", "model_path": APP_MODEL_PATH}
+    return {"status": "ok", "model_path": APP_MODEL_PATH, "backbone": APP_MODEL_BACKBONE}
 
 
 @app.post("/predict")
