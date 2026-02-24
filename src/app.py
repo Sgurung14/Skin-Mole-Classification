@@ -21,6 +21,7 @@ APP_ALLOWED_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
+APP_ALLOWED_ORIGIN_REGEX = os.getenv("ALLOWED_ORIGIN_REGEX") or None
 
 app = FastAPI(title="Skin Mole Classifier", version="1.0.0")
 
@@ -28,6 +29,7 @@ app = FastAPI(title="Skin Mole Classifier", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=APP_ALLOWED_ORIGINS,
+    allow_origin_regex=APP_ALLOWED_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

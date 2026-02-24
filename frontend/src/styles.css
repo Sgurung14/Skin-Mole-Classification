@@ -58,33 +58,22 @@ code {
   color: #52576a;
 }
 
+.api-target {
+  margin-top: 12px;
+}
+
 .form-grid {
   margin-top: 18px;
   display: grid;
   gap: 12px;
 }
 
-.field {
-  display: grid;
-  gap: 6px;
-  font-weight: 600;
-}
-
-.field span {
-  font-size: 0.9rem;
-}
-
-.field input,
 .upload-card,
 button {
   border-radius: 12px;
   border: 1px solid #d9d3c6;
   background: #fff;
   font: inherit;
-}
-
-.field input {
-  padding: 10px 12px;
 }
 
 .upload-card {

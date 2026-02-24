@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 
-const DEFAULT_API_BASE = "http://127.0.0.1:8000";
+const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 function App() {
-  const [apiBase, setApiBase] = useState(DEFAULT_API_BASE);
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [result, setResult] = useState(null);
@@ -35,7 +34,7 @@ function App() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`${apiBase.replace(/\/$/, "")}/predict`, {
+      const response = await fetch(`${DEFAULT_API_BASE.replace(/\/$/, "")}/predict`, {
         method: "POST",
         body: formData,
       });
@@ -64,16 +63,6 @@ function App() {
         </header>
 
         <form onSubmit={handleSubmit} className="form-grid">
-          <label className="field">
-            <span>API Base URL</span>
-            <input
-              type="url"
-              value={apiBase}
-              onChange={(e) => setApiBase(e.target.value)}
-              placeholder="http://127.0.0.1:8000"
-            />
-          </label>
-
           <label className="upload-card">
             <input
               type="file"
@@ -89,6 +78,9 @@ function App() {
         </form>
 
         {error ? <p className="error">{error}</p> : null}
+        <p className="subtle api-target">
+          API: <code>{DEFAULT_API_BASE}</code>
+        </p>
 
         <div className="content-grid">
           <section className="card">
