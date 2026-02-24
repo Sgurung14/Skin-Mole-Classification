@@ -76,7 +76,13 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Could not decode image.")
 
     x = preprocess_pil(img, APP_IMG_SIZE)
-    model = get_model()
+    try:
+        model = get_model()
+    except RuntimeError as exc:
+        # Surface deployment/runtime model issues clearly to API clients.
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=503, detail="Model could not be loaded.")
     prob = float(model.predict(x, verbose=0).reshape(-1)[0])
     pred = int(prob >= APP_THRESHOLD)
 
