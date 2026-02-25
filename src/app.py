@@ -3,16 +3,19 @@ import io
 import os
 
 import numpy as np
+import tensorflow as tf
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 
-from src.modeling import build_classifier
+from src.modeling import build_classifier, preprocess_input_array
 
 
 APP_MODEL_PATH = os.getenv("MODEL_PATH", "models/model.weights.h5")
+APP_MODEL_LOAD_MODE = os.getenv("MODEL_LOAD_MODE", "auto").strip().lower()
 APP_IMG_SIZE = int(os.getenv("IMG_SIZE", "224"))
 APP_THRESHOLD = float(os.getenv("THRESHOLD", "0.5"))
+APP_MODEL_BACKBONE = os.getenv("MODEL_BACKBONE", "efficientnetb0")
 APP_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
@@ -38,34 +41,74 @@ app.add_middleware(
 _model = None
 
 
-#check if model is loaded already, if not load it and return it. 
-# This way we only load the model once when the app starts, and subsequent requests will use the already loaded model, improving performance.
+def resolve_model_load_mode(model_path: str, mode: str) -> str:
+    value = (mode or "auto").strip().lower()
+    if value not in {"auto", "weights", "full"}:
+        raise RuntimeError("MODEL_LOAD_MODE must be one of: auto, weights, full")
+    if value != "auto":
+        return value
+
+    path_lower = model_path.lower()
+    if path_lower.endswith(".keras"):
+        return "full"
+    if path_lower.endswith(".weights.h5"):
+        return "weights"
+    if path_lower.endswith(".h5"):
+        # Treat generic .h5 as a full model by default.
+        return "full"
+    return "weights"
+
+
+# check if model is loaded already, if not load it and return it.
+# This way we only load the model once when the app starts, and subsequent requests will use
+# the already loaded model, improving performance.
 def get_model():
     global _model
     if _model is None:
         if not os.path.exists(APP_MODEL_PATH):
             raise RuntimeError(f"Model not found at {APP_MODEL_PATH}")
-        _model = build_classifier(image_size=(APP_IMG_SIZE, APP_IMG_SIZE), base_weights=None)
-        _model.load_weights(APP_MODEL_PATH)
+
+        load_mode = resolve_model_load_mode(APP_MODEL_PATH, APP_MODEL_LOAD_MODE)
+        if load_mode == "full":
+            _model = tf.keras.models.load_model(APP_MODEL_PATH, compile=False)
+        else:
+            _model = build_classifier(
+                image_size=(APP_IMG_SIZE, APP_IMG_SIZE),
+                base_weights=None,
+                backbone=APP_MODEL_BACKBONE,
+            )
+            _model.load_weights(APP_MODEL_PATH)
     return _model
 
 
 def preprocess_pil(img: Image.Image, img_size: int):
     img = img.convert("RGB")
     img = img.resize((img_size, img_size))
-    arr = np.asarray(img).astype("float32") / 255.0
+    arr = np.asarray(img).astype("float32")
     arr = np.expand_dims(arr, axis=0)
-    return arr
 
-#check server is running
+    load_mode = resolve_model_load_mode(APP_MODEL_PATH, APP_MODEL_LOAD_MODE)
+    if load_mode == "full":
+        # Full saved models may already include preprocessing layers/ops in the graph.
+        return arr
+
+    return preprocess_input_array(arr, backbone=APP_MODEL_BACKBONE)
+
+
+# check server is running
 @app.get("/health")
 def health():
-    return {"status": "ok", "model_path": APP_MODEL_PATH}
+    return {
+        "status": "ok",
+        "model_path": APP_MODEL_PATH,
+        "model_load_mode": resolve_model_load_mode(APP_MODEL_PATH, APP_MODEL_LOAD_MODE),
+        "backbone": APP_MODEL_BACKBONE,
+    }
 
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    #reject non-image files
+    # reject non-image files
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Please upload an image file.")
 
@@ -81,8 +124,8 @@ async def predict(file: UploadFile = File(...)):
     except RuntimeError as exc:
         # Surface deployment/runtime model issues clearly to API clients.
         raise HTTPException(status_code=503, detail=str(exc))
-    except Exception:
-        raise HTTPException(status_code=503, detail="Model could not be loaded.")
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=f"Model could not be loaded: {exc}")
     prob = float(model.predict(x, verbose=0).reshape(-1)[0])
     pred = int(prob >= APP_THRESHOLD)
 
