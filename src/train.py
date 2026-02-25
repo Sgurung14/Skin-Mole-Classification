@@ -91,8 +91,8 @@ def main():
 
         test_loss, test_acc, test_auc = model.evaluate(test_ds, verbose=1)
 
-        model_path = "models/model.weights.h5"
-        model.save_weights(model_path)
+        model_path = "models/model.keras"
+        model.save(model_path)
 
 
         metrics = {

@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 
 from src.utils import configure_mlflow_for_dagshub, set_common_mlflow_tags
 from src.data import build_datasets  # reuse same splitting and preprocessing
-from src.modeling import build_classifier
 
 
 def load_params():
@@ -66,7 +65,7 @@ def main():
     val_split = float(t.get("validation_split", 0.2))
     test_split = float(t.get("testing_split", 0.1))
 
-    model_path = "models/model.weights.h5"
+    model_path = "models/model.keras"
     reports_dir = Path("reports")
     reports_dir.mkdir(parents=True, exist_ok=True)
 
@@ -82,8 +81,7 @@ def main():
         seed=seed,
     )
 
-    model = build_classifier(image_size=image_size, base_weights=None)
-    model.load_weights(model_path)
+    model = tf.keras.models.load_model(model_path, compile=False)
 
     # Collect predictions
     y_true = []

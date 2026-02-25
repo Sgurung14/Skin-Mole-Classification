@@ -18,7 +18,7 @@ stages:
     cmd: python -m src.evaluation
     deps:
       - data/augmented
-      - models/model.weights.h5
+      - models/model.keras
       - src/evaluation.py
       - src/modeling.py
       - src/data.py
@@ -41,7 +41,7 @@ stages:
       - train.img_size
       - train.lr
     outs:
-      - models/model.weights.h5
+      - models/model.keras
     metrics:
       - metrics.json:
           cache: false
