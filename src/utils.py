@@ -1,6 +1,7 @@
 # src/utils.py
 import os
 import subprocess
+from pathlib import Path
 from typing import Optional
 
 import mlflow
@@ -37,6 +38,34 @@ def configure_mlflow_for_dagshub() -> bool:
     os.environ["MLFLOW_TRACKING_PASSWORD"] = token
     mlflow.set_experiment("skin-mole-classification")
     return True
+
+
+def describe_mlflow_tracking() -> dict:
+    """Return and print a small diagnostic summary of MLflow tracking destination."""
+    tracking_uri = mlflow.get_tracking_uri()
+    is_local = tracking_uri.startswith("file:") or tracking_uri == ""
+
+    local_store = None
+    if is_local:
+        if tracking_uri.startswith("file:"):
+            local_store = tracking_uri
+        else:
+            local_store = str(Path("mlruns").resolve())
+
+    info = {
+        "tracking_uri": tracking_uri or "(default local)",
+        "destination": "local-mlruns" if is_local else "remote",
+        "local_store": local_store,
+    }
+
+    print(
+        "[mlflow] tracking_uri={tracking_uri} destination={destination}{local}".format(
+            tracking_uri=info["tracking_uri"],
+            destination=info["destination"],
+            local=f" local_store={local_store}" if local_store else "",
+        )
+    )
+    return info
 
 
 def set_common_mlflow_tags(extra: Optional[dict] = None) -> None:

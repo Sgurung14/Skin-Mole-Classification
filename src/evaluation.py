@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix, roc_curve, auc, classification_rep
 
 import matplotlib.pyplot as plt
 
-from src.utils import configure_mlflow_for_dagshub, set_common_mlflow_tags
+from src.utils import configure_mlflow_for_dagshub, describe_mlflow_tracking, set_common_mlflow_tags
 from src.data import build_datasets  # reuse same splitting and preprocessing
 
 
@@ -70,6 +70,7 @@ def main():
     reports_dir.mkdir(parents=True, exist_ok=True)
 
     using_dagshub = configure_mlflow_for_dagshub()
+    describe_mlflow_tracking()
 
     # Build datasets with identical split logic
     _, _, test_ds = build_datasets(

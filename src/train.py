@@ -7,7 +7,7 @@ import tensorflow as tf
 import yaml
 import mlflow
 
-from .utils import configure_mlflow_for_dagshub, set_common_mlflow_tags
+from .utils import configure_mlflow_for_dagshub, describe_mlflow_tracking, set_common_mlflow_tags
 from .data import build_datasets  # if you made data.py; otherwise inline dataset code
 from .modeling import build_classifier
 
@@ -38,6 +38,7 @@ def main():
     Path("models").mkdir(parents=True, exist_ok=True)
 
     using_dagshub = configure_mlflow_for_dagshub()
+    describe_mlflow_tracking()
 
     train_ds, val_ds, test_ds = build_datasets(
         dataset_dir=dataset_dir,
