@@ -24,7 +24,7 @@ def resolve_model_load_mode(model_path: str, mode: str) -> str:
     return "weights"
 
 
-def load_and_preprocess(image_path: str, img_size: int, load_mode: str, backbone: str):
+def load_and_preprocess(image_path: str, img_size: int, load_mode: str):
     raw = tf.io.read_file(image_path)
     img = tf.image.decode_image(raw, channels=3, expand_animations=False)
     img = tf.image.resize(img, [img_size, img_size])
@@ -35,17 +35,16 @@ def load_and_preprocess(image_path: str, img_size: int, load_mode: str, backbone
         # Full saved models may include preprocessing inside the model graph.
         return img
 
-    return tf.convert_to_tensor(preprocess_input_array(img.numpy(), backbone=backbone), dtype=tf.float32)
+    return tf.convert_to_tensor(preprocess_input_array(img.numpy()), dtype=tf.float32)
 
 
-def load_model(model_path: str, img_size: int, backbone: str, load_mode: str):
+def load_model(model_path: str, img_size: int, load_mode: str):
     if load_mode == "full":
         return tf.keras.models.load_model(model_path, compile=False)
 
     model = build_classifier(
         image_size=(img_size, img_size),
         base_weights=None,
-        backbone=backbone,
     )
     model.load_weights(model_path)
     return model
@@ -56,14 +55,13 @@ def main():
     parser.add_argument("--image", required=True, help="Path to image file")
     parser.add_argument("--model", default="models/model.weights.h5", help="Path to saved model or weights")
     parser.add_argument("--load-mode", default="auto", choices=["auto", "weights", "full"])
-    parser.add_argument("--backbone", default="efficientnetb0", help="Backbone name for weights mode")
     parser.add_argument("--img-size", type=int, default=224)
     parser.add_argument("--threshold", type=float, default=0.5)
     args = parser.parse_args()
 
     load_mode = resolve_model_load_mode(args.model, args.load_mode)
-    model = load_model(args.model, args.img_size, args.backbone, load_mode)
-    x = load_and_preprocess(args.image, args.img_size, load_mode, args.backbone)
+    model = load_model(args.model, args.img_size, load_mode)
+    x = load_and_preprocess(args.image, args.img_size, load_mode)
     prob = float(model.predict(x, verbose=0).reshape(-1)[0])
     pred = int(prob >= args.threshold)
 
@@ -78,7 +76,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# examples:
-# python -m src.predict --image path/to.jpg --model models/model.keras --load-mode full
-# python -m src.predict --image path/to.jpg --model models/model.weights.h5 --backbone resnet101

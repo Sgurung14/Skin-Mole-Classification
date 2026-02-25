@@ -66,7 +66,7 @@ def main():
         set_common_mlflow_tags(
             {
                 "tracking": "dagshub" if using_dagshub else "local",
-                "model": "EfficientNetB0",
+                "model": "MobileNetV2",
                 "img_size": str(img_size),
             }
         )

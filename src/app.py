@@ -15,7 +15,6 @@ APP_MODEL_PATH = os.getenv("MODEL_PATH", "models/model.weights.h5")
 APP_MODEL_LOAD_MODE = os.getenv("MODEL_LOAD_MODE", "auto").strip().lower()
 APP_IMG_SIZE = int(os.getenv("IMG_SIZE", "224"))
 APP_THRESHOLD = float(os.getenv("THRESHOLD", "0.5"))
-APP_MODEL_BACKBONE = os.getenv("MODEL_BACKBONE", "efficientnetb0")
 APP_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
@@ -75,7 +74,6 @@ def get_model():
             _model = build_classifier(
                 image_size=(APP_IMG_SIZE, APP_IMG_SIZE),
                 base_weights=None,
-                backbone=APP_MODEL_BACKBONE,
             )
             _model.load_weights(APP_MODEL_PATH)
     return _model
@@ -92,7 +90,7 @@ def preprocess_pil(img: Image.Image, img_size: int):
         # Full saved models may already include preprocessing layers/ops in the graph.
         return arr
 
-    return preprocess_input_array(arr, backbone=APP_MODEL_BACKBONE)
+    return preprocess_input_array(arr)
 
 
 # check server is running
@@ -102,7 +100,6 @@ def health():
         "status": "ok",
         "model_path": APP_MODEL_PATH,
         "model_load_mode": resolve_model_load_mode(APP_MODEL_PATH, APP_MODEL_LOAD_MODE),
-        "backbone": APP_MODEL_BACKBONE,
     }
 
 
