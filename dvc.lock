@@ -18,12 +18,12 @@ stages:
       size: 1841
     - path: src/modeling.py
       hash: md5
-      md5: b13908c431c7d340f329b33b195c31ae
-      size: 553
+      md5: 9a25b488893095e2af97af9eaed4121d
+      size: 786
     - path: src/train.py
       hash: md5
-      md5: 2ff2f658ca156f49a707c93781b04f35
-      size: 3580
+      md5: 51940bc85e23d5a04c0bc3ecec2c458e
+      size: 3621
     params:
       params.yaml:
         train.batch_size: 16
@@ -33,12 +33,12 @@ stages:
     outs:
     - path: metrics.json
       hash: md5
-      md5: 69518b425bcf53df0520c1bed7614f72
-      size: 230
-    - path: models/model.weights.h5
+      md5: a80f74a7c86e8384a3d49bf2c87de30c
+      size: 231
+    - path: models/model.keras
       hash: md5
-      md5: adcc43da19744fee32ac7d813ed03cef
-      size: 16840320
+      md5: caff0169a9feccefa970afa08dd8f3cf
+      size: 9636211
   evaluate:
     cmd: python -m src.evaluation
     deps:
@@ -47,31 +47,31 @@ stages:
       md5: 0d2d915d2c7b1c9861e1231e564f346f.dir
       size: 331946596
       nfiles: 19044
-    - path: models/model.weights.h5
+    - path: models/model.keras
       hash: md5
-      md5: adcc43da19744fee32ac7d813ed03cef
-      size: 16840320
+      md5: caff0169a9feccefa970afa08dd8f3cf
+      size: 9636211
     - path: src/data.py
       hash: md5
       md5: 3e00c13feb7cc2af8357b4a6ce4380c0
       size: 1841
     - path: src/evaluation.py
       hash: md5
-      md5: 117be8907c6bf1f451558b5818baf00d
-      size: 4166
+      md5: 45a7e3db29c4e6d1acc8d692f3956a6a
+      size: 4136
     - path: src/modeling.py
       hash: md5
-      md5: b13908c431c7d340f329b33b195c31ae
-      size: 553
+      md5: 9a25b488893095e2af97af9eaed4121d
+      size: 786
     outs:
     - path: eval_metrics.json
       hash: md5
-      md5: 851c811e7a66795ad92655238c0b2d5d
-      size: 233
+      md5: 65c495d22229ce9f9c1d64be829647ca
+      size: 250
     - path: reports
       hash: md5
-      md5: ddf9931aa9dd30e6f7489b49361f683c.dir
-      size: 73837
+      md5: 40b022ec86521a72b521838437468667.dir
+      size: 68109
       nfiles: 2
   augment:
     cmd: python -m src.prepare_data
